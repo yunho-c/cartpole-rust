@@ -1,0 +1,20 @@
+[package]
+name = "cartpole-rust"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = "0.13.2"
+gym-rs = "0.3.0"
+ordered-float = "4.2.0"
+rand = "0.8.5"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
+
+[[bin]]
+name = "3d"
+path = "src/3d_exp.rs"
