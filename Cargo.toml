@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.13.2"
+dfdx = "0.13.0"
 gym-rs = "0.3.0"
 ordered-float = "4.2.0"
 rand = "0.8.5"
@@ -16,5 +17,25 @@ name = "main"
 path = "src/main.rs"
 
 [[bin]]
-name = "3d"
+name = "3d_exp"
 path = "src/3d_exp.rs"
+
+[[bin]]
+name = "3d_basic"
+path = "src/3d_basic.rs"
+
+[[bin]]
+name = "2d"
+path = "src/2d_bevy.rs"
+
+[[bin]]
+name = "2d_manual"
+path = "src/2d_manual.rs"
+
+[[bin]]
+name = "2d_manual_nophysics"
+path = "src/2d_manual_nophysics.rs"
+
+[[bin]]
+name = "2d_manual_hand_derived"
+path = "src/2d_manual_hand_derived.rs"
