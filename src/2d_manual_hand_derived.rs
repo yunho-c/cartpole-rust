@@ -18,8 +18,8 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, setup)
-        .add_systems(StateTransition, control_cart)
-        .add_systems(StateTransition, update_pole)
+        .add_systems(Update, control_cart)
+        .add_systems(Update, update_pole)
         .run();
 }
 
@@ -40,33 +40,31 @@ impl Velocity {
 
 fn setup(mut commands: Commands) {
     // Spawn the camera
-    commands.spawn(Camera2dBundle::new_with_far(1.0));
+    commands.spawn(Camera2d);
 
     // Spawn the cart
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            color: Color::rgb(0.8, 0.7, 0.6),
-            custom_size: Some(CART_SIZE.truncate()),
-            ..Default::default()
-        },
-        transform: Transform::from_xyz(0.0, -200.0, 0.0),
+    commands.spawn(Sprite {
+        color: Color::srgb(0.8, 0.7, 0.6),
+        custom_size: Some(CART_SIZE.truncate()),
         ..Default::default()
     })
-    .insert(Cart)
-    .insert(Velocity::default());
+    .insert((
+        Transform::from_xyz(0.0, -200.0, 0.0),
+        Cart,
+        Velocity::default()
+    ));
 
     // Spawn the pole
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            color: Color::rgb(0.4, 0.4, 0.4),
-            custom_size: Some(POLE_SIZE.truncate()),
-            ..Default::default()
-        },
-        transform: Transform::from_xyz(0.0, -100.0, 0.0),
+    commands.spawn(Sprite {
+        color: Color::srgb(0.4, 0.4, 0.4),
+        custom_size: Some(POLE_SIZE.truncate()),
         ..Default::default()
     })
-    .insert(Pole)
-    .insert(Velocity::default());
+    .insert((
+        Transform::from_xyz(0.0, -100.0, 0.0),
+        Pole,
+        Velocity::default()
+    ));
 }
 
 fn control_cart(
@@ -77,24 +75,25 @@ fn control_cart(
 
     let mut f: f32 = 0.;
     if input.pressed(KeyCode::ArrowLeft) {
-        // cart_transform.translation.x -= 5.0;
         f = -INPUT_FORCE;
     }
     if input.pressed(KeyCode::ArrowRight) {
-        // cart_transform.translation.x += 5.0;
         f = INPUT_FORCE;
     }
-    cart_velocity.0 += f / CART_MASS * TAU; 
+
+    // Update the cart's velocity and position
+    cart_velocity.0 += f / CART_MASS * TAU;
     cart_transform.translation.x += cart_velocity.0 * TAU;
 }
 
 fn update_pole(
-    cart_query: Query<&Transform, With<Cart>>,
-    mut pole_query: Query<(&mut Transform, &mut Velocity), (With<Pole>, Without<Cart>)>,
+    cart_query: Query<&Transform, (With<Cart>, Without<Pole>)>,
+    mut pole_query: Query<&mut Transform, (With<Pole>, Without<Cart>)>,
 ) {
     let cart_transform = cart_query.single();
-    let (mut pole_transform, mut pole_velocity) = pole_query.single_mut();
+    let mut pole_transform = pole_query.single_mut();
 
+    // Keep the pole directly above the cart
     pole_transform.translation.x = cart_transform.translation.x;
-    
+
 }
